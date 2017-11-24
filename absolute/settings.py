@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'nested_admin',
     'core',
+    'stdimage',
 ]
 
 MIDDLEWARE = [
@@ -179,6 +180,9 @@ USE_TZ = True
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads')
+MEDIA_URL = '/media/'
 
 LOCALE_PATHS = ( os.path.join(BASE_DIR, 'locale'), )
 
