@@ -20,7 +20,6 @@ build:
     - shell
   only:
     - master
-    - develop
 
 deploy_staging:
   stage: deploy
@@ -37,4 +36,4 @@ deploy_staging:
   tags:
     - shell
   only:
-    - develop
+    - master
