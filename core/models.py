@@ -27,3 +27,9 @@ class Entry(models.Model):
     def thumbnail(self):
         return u'<img src="%s%s" />' % (settings.MEDIA_URL, self.image.thumbnail)
     thumbnail.allow_tags = True
+
+class Shedule(models.Model):
+    user = models.ForeignKey('core.User', null=True, blank=True, on_delete=models.CASCADE)
+    day_of_week = models.IntegerField()
+    start_time = models.CharField(max_length=10)
+    end_time = models.CharField(max_length=10)

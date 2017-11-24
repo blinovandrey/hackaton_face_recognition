@@ -38,6 +38,7 @@ ADD requirements.txt /var/www
 
 RUN pip install pip
 RUN pip install uwsgi
+RUN pip install face_recognition
 RUN pip install --no-cache-dir -r /var/www/requirements.txt
 
 WORKDIR /var/www/absolute
