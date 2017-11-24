@@ -1,4 +1,5 @@
 import datetime
+import json
 from django.shortcuts import render
 from django.conf import settings
 from google.oauth2 import id_token
@@ -6,6 +7,7 @@ from google.auth.transport import requests
 from rest_framework import views, viewsets
 from rest_framework.parsers import FileUploadParser
 from core.serializers import *
+from rest_framework.response import Response
 import face_recognition
 
 # Create your views here.
@@ -56,6 +58,8 @@ class EntryViewSet(viewsets.ModelViewSet):
         else:
             request.data['type'] = 'enter'
 
+        entry = Entry.objects.create(user=None, type=request.data['type'], photo=request.data['photo'])
+
         known_image = face_recognition.load_image_file(request.user.photo)
         unknown_image = face_recognition.load_image_file(request.data['file'])
 
@@ -63,5 +67,7 @@ class EntryViewSet(viewsets.ModelViewSet):
         unknown_encoding = face_recognition.face_encodings(unknown_image)[0]
 
         results = face_recognition.compare_faces([known_encoding], unknown_encoding)
+        print(results)
 
-        return super(EntryViewSet, self).create(request, *args, **kwargs)
+        return Response(EntrySerializer(entry).data)
+
