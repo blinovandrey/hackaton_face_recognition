@@ -6,6 +6,7 @@ from google.auth.transport import requests
 from rest_framework import views, viewsets
 from rest_framework.parsers import FileUploadParser
 from core.serializers import *
+import face_recognition
 
 # Create your views here.
 class GoogleLoginView(views.APIView):
@@ -45,14 +46,22 @@ class EntryViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         # request.data._mutable = True
-        request.data['user'] = request.user.id
         request.data['photo'] = request.data['file']
         today_min = datetime.datetime.combine(datetime.date.today(), datetime.time.min)
-        
+
         if not Entry.objects.filter(user=request.user):
             request.data['type'] = 'enter'
         elif Entry.objects.filter(user=request.user, type='enter', datetimestamp__gte=today_min):
             request.data['type'] = 'exit'
         else:
             request.data['type'] = 'enter'
+        import pdb; pdb.set_trace()
+        known_images = [face_recognition.load_image_file(user.photo) for user in User.objects.all()]
+        unknown_image = face_recognition.load_image_file(request.data['file'])
+
+        known_encoding = face_recognition.face_encodings(known_image[0])[0]
+        unknown_encoding = face_recognition.face_encodings(unknown_image)[0]
+
+        results = face_recognition.compare_faces([known_encoding], unknown_encoding)
+
         return super(EntryViewSet, self).create(request, *args, **kwargs)
