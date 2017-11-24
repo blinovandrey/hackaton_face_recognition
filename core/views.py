@@ -56,10 +56,10 @@ class EntryViewSet(viewsets.ModelViewSet):
         else:
             request.data['type'] = 'enter'
 
-        known_images = face_recognition.load_image_file(request.user.photo)
+        known_image = face_recognition.load_image_file(request.user.photo)
         unknown_image = face_recognition.load_image_file(request.data['file'])
 
-        known_encoding = face_recognition.face_encodings(known_image[0])[0]
+        known_encoding = face_recognition.face_encodings(known_image)[0]
         unknown_encoding = face_recognition.face_encodings(unknown_image)[0]
 
         results = face_recognition.compare_faces([known_encoding], unknown_encoding)
