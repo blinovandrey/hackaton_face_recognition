@@ -29,6 +29,7 @@ services:
       - absolute/.env
     environment:
       - VIRTUAL_HOST=$HOSTNAME,www.$HOSTNAME
+      - VIRTUAL_PROTO=uwsgi
       - LETSENCRYPT_HOST=$HOSTNAME,www.$HOSTNAME
       - LETSENCRYPT_EMAIL=$EMAIL
   redis:
