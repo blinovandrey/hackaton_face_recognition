@@ -1,0 +1,52 @@
+version: '2'
+services:
+  # rabbit:
+  #   image: rabbitmq:alpine
+  #   restart: always
+  #   environment:
+  #     - RABBITMQ_ERLANG_COOKIE
+  # celery:
+  #   image: $CI_REGISTRY_IMAGE
+  #   restart: always
+  #   command: celery -A gett_airport worker -l info
+  #   volumes_from:
+  #     - web
+  #   env_file:
+  #     - gett_airport/.env
+  web:
+    container_name: absolute
+    restart: always
+    image: $CI_REGISTRY_IMAGE
+    volumes:
+      - ssl:/etc/nginx/ssl
+      - static:/var/www/absolute/static
+    build:
+      context: .
+    command: daphne absolute.asgi:channel_layer -b 0.0.0.0 -p 80
+    expose:
+      - "80"
+    env_file:
+      - absolute/.env
+    environment:
+      - VIRTUAL_HOST=$HOSTNAME,www.$HOSTNAME
+      - LETSENCRYPT_HOST=$HOSTNAME,www.$HOSTNAME
+      - LETSENCRYPT_EMAIL=$EMAIL
+  worker:
+    image: $CI_REGISTRY_IMAGE
+    command: python manage.py runworker
+    env_file:
+      - absolute/.env
+  redis:
+    image: redis
+    volumes:
+      - redis-data:/data/
+    container_name: absolute-redis
+volumes:
+  ssl:
+  static:
+  redis-data:
+
+networks:
+  default:
+    external:
+      name: nginx-proxy

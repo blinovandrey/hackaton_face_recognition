@@ -1,0 +1,40 @@
+stages:
+  - build
+  - deploy
+
+# cache:
+#   untracked: true
+#   key: "$CI_BUILD_REF_NAME"
+#   paths:
+#   - static/node_modules/
+
+build:
+  stage: build
+  script:
+    - envsubst < absolute/.env.example > absolute/.env
+    # - cd static && npm install && PATH="./node_modules/.bin:$PATH" gulp build --prod && cd -
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+    - docker-compose -f docker-compose.yml build
+    - docker push $CI_REGISTRY_IMAGE
+  tags:
+    - shell
+  only:
+    - master
+    - develop
+
+deploy_staging:
+  stage: deploy
+  script:
+    - envsubst < absolute/.env.example > absolute/.env
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+    - export DOCKER_HOST=$STAGING_HOST
+    - export DOCKER_TLS_VERIFY=1
+    - export COMPOSE="docker-compose -p absolute -f docker-compose.yml"
+    - $COMPOSE pull
+    - $COMPOSE run --rm web python manage.py migrate --noinput
+    - $COMPOSE run --rm web python manage.py collectstatic --noinput
+    - $COMPOSE up --no-build -d
+  tags:
+    - shell
+  only:
+    - develop

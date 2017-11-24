@@ -1,0 +1,61 @@
+version: '2'
+services:
+  db:
+    image: mdillon/postgis
+  # rabbit:
+  #   image: rabbitmq:alpine
+  #   restart: always
+  #   environment:
+  #     - RABBITMQ_ERLANG_COOKIE
+  # celery:
+  #   build: .
+  #   restart: always
+  #   command: celery -A gett_airport worker -l info
+  #   volumes_from:
+  #     - web
+  #   env_file:
+  #     - gett_airport/.env
+  web:
+    build: .
+    command: daphne gett_kiosk.asgi:channel_layer -b 0.0.0.0 -p 80
+    restart: always
+    volumes:
+      - .:/var/www/gett_kiosk
+    ports:
+      - 80:80
+    env_file:
+      - gett_kiosk/.env
+    depends_on:
+      - db
+    stdin_open: true
+    tty: true
+  redis:
+    image: redis
+    volumes:
+      - redis-data:/data/
+    container_name: gett_kiosk-redis
+  worker:
+    build: .
+    command: python manage.py runworker
+    restart: always
+    env_file:
+      - gett_kiosk/.env
+    stdin_open: true
+    tty: true
+  tornado:
+    build: .
+    command: python tornado_request/requester.py
+    restart: always
+    env_file:
+      - gett_kiosk/.env
+    stdin_open: true
+    tty: true
+  # delay_ws:
+  #   build: .
+  #   command: python manage.py rundelay
+  #   env_file:
+  #     - .env
+volumes:
+  # ssl:
+  # static:
+  redis-data:
