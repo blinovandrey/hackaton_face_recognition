@@ -6,7 +6,13 @@ from stdimage.utils import UploadToClassNameDirUUID
 
 # Create your models here.
 class User(AbstractUser):
-    pass
+    photo = StdImageField(verbose_name=_("image"), null=True, upload_to=UploadToClassNameDirUUID(), variations={
+        'thumbnail': (121, 121),
+        'bottom': (275, 275),
+    })
+    def thumbnail(self):
+        return u'<img src="%s%s" />' % (settings.MEDIA_URL, self.image.thumbnail)
+    thumbnail.allow_tags = True
 
 class Entry(models.Model):
     ENTER = 'enter'
