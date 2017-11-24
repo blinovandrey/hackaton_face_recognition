@@ -6,7 +6,7 @@ from google.auth.transport import requests
 from rest_framework import views, viewsets
 from rest_framework.parsers import FileUploadParser
 from core.serializers import *
-import face_recognition
+# import face_recognition
 
 # Create your views here.
 class GoogleLoginView(views.APIView):

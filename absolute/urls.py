@@ -17,6 +17,7 @@ from django.conf.urls import url, include
 from django.contrib import admin
 from rest_framework import routers
 from rest_framework.authtoken import views as authviews
+from django.conf.urls.static import static
 
 from core.views import *
 
@@ -32,4 +33,6 @@ urlpatterns = [
 	url(r'^api/token-auth/', authviews.obtain_auth_token),
 ]
 
-    
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
