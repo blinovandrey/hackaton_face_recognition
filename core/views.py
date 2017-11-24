@@ -38,7 +38,7 @@ class EntryViewSet(viewsets.ModelViewSet):
     """
     Example:
 
-    `curl -H "Authorization: Token 56597cc7d805609de476188be5744c49c553ef05" -H "Content-Disposition: attachment; filename=андрюха.png" - --data-binary @"/Downloads/андрюха.png" http://127.0.0.1:8000/api/entries/`
+    `curl -H "Authorization: Token 512e3026a7c11dc6cc52027a6c1677b012f0dfae" -H "Content-Disposition: attachment; filename=андрюха.png" --data-binary @"../Downloads/андрюха.png" https://absolute.cloud.technokratos.com/api/entries/`
     """
     queryset = Entry.objects.all()
     serializer_class = EntrySerializer
@@ -55,8 +55,8 @@ class EntryViewSet(viewsets.ModelViewSet):
             request.data['type'] = 'exit'
         else:
             request.data['type'] = 'enter'
-        import pdb; pdb.set_trace()
-        known_images = [face_recognition.load_image_file(user.photo) for user in User.objects.all()]
+
+        known_images = face_recognition.load_image_file(user.photo)
         unknown_image = face_recognition.load_image_file(request.data['file'])
 
         known_encoding = face_recognition.face_encodings(known_image[0])[0]
