@@ -30,7 +30,7 @@ deploy_staging:
     - export DOCKER_TLS_VERIFY=1
     - export COMPOSE="docker-compose -p absolute -f docker-compose.yml"
     - $COMPOSE pull
-    # - $COMPOSE run --rm web python manage.py migrate --noinput
+    - $COMPOSE run --rm web python manage.py migrate --noinput
     # - $COMPOSE run --rm web python manage.py collectstatic --noinput
     - $COMPOSE up --no-build -d
   tags:
