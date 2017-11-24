@@ -19,7 +19,7 @@ services:
     image: $CI_REGISTRY_IMAGE
     volumes:
       - ssl:/etc/nginx/ssl
-      - static:/var/www/absolute/static
+      # - static:/var/www/absolute/static
     build:
       context: .
     command: uwsgi --ini uwsgi.ini
@@ -38,7 +38,7 @@ services:
     container_name: absolute-redis
 volumes:
   ssl:
-  static:
+  # static:
   redis-data:
 
 networks:
