@@ -20,7 +20,14 @@ from rest_framework.authtoken import views as authviews
 
 from core.views import *
 
+router = routers.DefaultRouter()
+
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^api/tokensignin/$', GoogleLoginView.as_view()),
+    url(r'^api/', include(router.urls)),
+	url(r'^api/auth/', include('rest_framework.urls', namespace='rest_framework')),
+	url(r'^api/token-auth/', authviews.obtain_auth_token),
 ]
+
+    
