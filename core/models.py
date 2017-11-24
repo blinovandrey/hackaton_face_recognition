@@ -8,7 +8,7 @@ from stdimage.utils import UploadToClassNameDirUUID
 class User(AbstractUser):
     pass
 
-class Enrty(models.Model):
+class Entry(models.Model):
     ENTER = 'enter'
     EXIT = 'exit'
 

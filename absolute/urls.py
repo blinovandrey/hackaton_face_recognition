@@ -21,6 +21,7 @@ from rest_framework.authtoken import views as authviews
 from core.views import *
 
 router = routers.DefaultRouter()
+router.register('entries', EntryViewSet)
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
