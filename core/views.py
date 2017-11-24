@@ -36,14 +36,14 @@ class EntryViewSet(viewsets.ModelViewSet):
     """
     Example:
 
-    `curl -H "Authorization: Token 56597cc7d805609de476188be5744c49c553ef05" -H "Content-Disposition: attachment; filename=андрюха.png" --data-binary @"/Downloads/андрюха.png" http://127.0.0.1:8000/api/entries/`
+    `curl -H "Authorization: Token 56597cc7d805609de476188be5744c49c553ef05" -H "Content-Disposition: attachment; filename=андрюха.png" - --data-binary @"/Downloads/андрюха.png" http://127.0.0.1:8000/api/entries/`
     """
     queryset = Entry.objects.all()
     serializer_class = EntrySerializer
     parser_classes = (FileUploadParser,)
 
     def create(self, request, *args, **kwargs):
-        request.data._mutable = True
+        # request.data._mutable = True
         import pdb; pdb.set_trace()
         request.data['user'] = request.user.id
         request.data['photo'] = request.data['file']
