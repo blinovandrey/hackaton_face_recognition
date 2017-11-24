@@ -1,3 +1,4 @@
+import datetime
 from django.shortcuts import render
 from django.conf import settings
 from google.oauth2 import id_token
@@ -44,7 +45,14 @@ class EntryViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         # request.data._mutable = True
-        import pdb; pdb.set_trace()
         request.data['user'] = request.user.id
         request.data['photo'] = request.data['file']
+        today_min = datetime.datetime.combine(datetime.date.today(), datetime.time.min)
+        
+        if not Entry.objects.filter(user=request.user):
+            request.data['type'] = 'enter'
+        elif Entry.objects.filter(user=request.user, type='enter', datetimestamp__gte=today_min):
+            request.data['type'] = 'exit'
+        else:
+            request.data['type'] = 'enter'
         return super(EntryViewSet, self).create(request, *args, **kwargs)
