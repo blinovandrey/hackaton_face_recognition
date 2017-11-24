@@ -31,11 +31,6 @@ services:
       - VIRTUAL_HOST=$HOSTNAME,www.$HOSTNAME
       - LETSENCRYPT_HOST=$HOSTNAME,www.$HOSTNAME
       - LETSENCRYPT_EMAIL=$EMAIL
-  worker:
-    image: $CI_REGISTRY_IMAGE
-    command: python manage.py runworker
-    env_file:
-      - absolute/.env
   redis:
     image: redis
     volumes:
