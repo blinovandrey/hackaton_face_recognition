@@ -26,7 +26,7 @@ class Entry(models.Model):
     user = models.ForeignKey('core.User', null=True, blank=True, on_delete=models.CASCADE)
     type = models.CharField(max_length=20, choices=TYPE_CHOICES)
     datetimestamp = models.DateTimeField(auto_now_add=True)
-    photo = StdImageField(verbose_name=_("image"), null=True, upload_to=UploadToClassNameDirUUID(), variations={
+    photo = StdImageField(verbose_name=_("image"), null=True, blank=True, upload_to=UploadToClassNameDirUUID(), variations={
         'thumbnail': (121, 121),
         'bottom': (275, 275),
     })
