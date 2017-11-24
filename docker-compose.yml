@@ -6,7 +6,7 @@ services:
     image: $CI_REGISTRY_IMAGE
     volumes:
       - ssl:/etc/nginx/ssl
-      - uploads:/var/www/bve/uploads
+      - uploads:/var/www/absolute/uploads
       - static:/var/www/absolute/static
     build:
       context: .
