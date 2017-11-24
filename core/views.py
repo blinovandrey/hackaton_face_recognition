@@ -8,7 +8,7 @@ from rest_framework import views, viewsets
 from rest_framework.parsers import FileUploadParser
 from core.serializers import *
 from rest_framework.response import Response
-import face_recognition
+# import face_recognition
 
 # Create your views here.
 class GoogleLoginView(views.APIView):
@@ -64,14 +64,15 @@ class EntryViewSet(viewsets.ModelViewSet):
         unknown_encoding = face_recognition.face_encodings(unknown_image)[0]
 
         for user in User.objects.all():
-            known_image = face_recognition.load_image_file(user.photo)
-            known_encoding = face_recognition.face_encodings(known_image)[0]
-            results = face_recognition.compare_faces([known_encoding], unknown_encoding)
-            print(results)
-            if results[0]:
-                entry.user = user
-                entry.save()
-                print(entry.user)
-                break
+            if user.photo:
+                known_image = face_recognition.load_image_file(user.photo)
+                known_encoding = face_recognition.face_encodings(known_image)[0]
+                results = face_recognition.compare_faces([known_encoding], unknown_encoding)
+                print(results)
+                if results[0]:
+                    entry.user = user
+                    entry.save()
+                    print(entry.user)
+                    break
         return Response(EntrySerializer(entry).data)
 

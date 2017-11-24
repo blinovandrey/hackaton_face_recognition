@@ -6,7 +6,7 @@ from stdimage.utils import UploadToClassNameDirUUID
 
 # Create your models here.
 class User(AbstractUser):
-    photo = StdImageField(verbose_name=_("image"), null=True, upload_to=UploadToClassNameDirUUID(), variations={
+    photo = StdImageField(verbose_name=_("image"), null=True, blank=True, upload_to=UploadToClassNameDirUUID(), variations={
         'thumbnail': (121, 121),
         'bottom': (275, 275),
     })
