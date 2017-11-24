@@ -17,14 +17,14 @@ services:
   #     - gett_airport/.env
   web:
     build: .
-    command: daphne gett_kiosk.asgi:channel_layer -b 0.0.0.0 -p 80
+    command: uwsgi --ini uwsgi.ini
     restart: always
     volumes:
-      - .:/var/www/gett_kiosk
+      - .:/var/www/absolute
     ports:
       - 80:80
     env_file:
-      - gett_kiosk/.env
+      - absolute/.env
     depends_on:
       - db
     stdin_open: true
@@ -33,28 +33,7 @@ services:
     image: redis
     volumes:
       - redis-data:/data/
-    container_name: gett_kiosk-redis
-  worker:
-    build: .
-    command: python manage.py runworker
-    restart: always
-    env_file:
-      - gett_kiosk/.env
-    stdin_open: true
-    tty: true
-  tornado:
-    build: .
-    command: python tornado_request/requester.py
-    restart: always
-    env_file:
-      - gett_kiosk/.env
-    stdin_open: true
-    tty: true
-  # delay_ws:
-  #   build: .
-  #   command: python manage.py rundelay
-  #   env_file:
-  #     - .env
+    container_name: absolute-redis
 volumes:
   # ssl:
   # static:
