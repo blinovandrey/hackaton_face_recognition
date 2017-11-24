@@ -60,14 +60,18 @@ class EntryViewSet(viewsets.ModelViewSet):
 
         entry = Entry.objects.create(user=None, type=request.data['type'], photo=request.data['photo'])
 
-        known_image = face_recognition.load_image_file(request.user.photo)
         unknown_image = face_recognition.load_image_file(request.data['file'])
-
-        known_encoding = face_recognition.face_encodings(known_image)[0]
         unknown_encoding = face_recognition.face_encodings(unknown_image)[0]
 
-        results = face_recognition.compare_faces([known_encoding], unknown_encoding)
-        print(results)
-
+        for user in User.objects.all():
+            known_image = face_recognition.load_image_file(user.photo)
+            known_encoding = face_recognition.face_encodings(known_image)[0]
+            results = face_recognition.compare_faces([known_encoding], unknown_encoding)
+            print(results)
+            if results[0]:
+                entry.user = user
+                entry.save()
+                print(entry.user)
+                break
         return Response(EntrySerializer(entry).data)
 
