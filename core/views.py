@@ -106,7 +106,7 @@ class EntryViewSet(viewsets.ModelViewSet):
         request.data['photo'] = request.data['file']
         today_min = datetime.datetime.combine(datetime.date.today(), datetime.time.min)
 
-        entry = Entry.objects.create(user=None, type=request.data['type'], photo=request.data['photo'])
+        entry = Entry.objects.create(user=None, type=None, photo=request.data['photo'])
 
         unknown_image = face_recognition.load_image_file(request.data['file'])
         unknown_encoding = face_recognition.face_encodings(unknown_image)[0]
