@@ -1,18 +1,5 @@
 version: '2'
 services:
-  # rabbit:
-  #   image: rabbitmq:alpine
-  #   restart: always
-  #   environment:
-  #     - RABBITMQ_ERLANG_COOKIE
-  # celery:
-  #   image: $CI_REGISTRY_IMAGE
-  #   restart: always
-  #   command: celery -A gett_airport worker -l info
-  #   volumes_from:
-  #     - web
-  #   env_file:
-  #     - gett_airport/.env
   web:
     container_name: absolute
     restart: always
