@@ -182,3 +182,5 @@ STATIC_URL = '/static/'
 
 LOCALE_PATHS = ( os.path.join(BASE_DIR, 'locale'), )
 
+CLIENT_ID = env('CLIENT_ID')
+CLIENT_SECRET = env('CLIENT_SECRET')
