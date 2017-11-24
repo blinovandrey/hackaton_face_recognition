@@ -4,11 +4,16 @@ from django.shortcuts import render
 from django.conf import settings
 from google.oauth2 import id_token
 from google.auth.transport import requests
-from rest_framework import views, viewsets
+from rest_framework import views, viewsets, mixins
 from rest_framework.parsers import FileUploadParser
 from core.serializers import *
 from rest_framework.response import Response
-# import face_recognition
+from rest_framework import status
+from rest_framework.exceptions import ValidationError
+from django.core import validators
+from django.utils.translation import ugettext_lazy as _
+
+import face_recognition
 
 # Create your views here.
 class GoogleLoginView(views.APIView):
@@ -34,6 +39,56 @@ class GoogleLoginView(views.APIView):
         except ValueError:
             # Invalid token
             pass
+
+
+class UserViewSet(mixins.RetrieveModelMixin,
+                  mixins.UpdateModelMixin,
+                  mixins.CreateModelMixin,
+                  viewsets.GenericViewSet):
+    """
+    Доступ к текущему пользователю: `/users/me/` \n
+    Получить токен: `/auth-token/`, username = `email`, password = `password` \n
+    Авторизация по токену: `curl -X GET http://127.0.0.1:8000/api/example/ -H 'Authorization: Token 9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b'`
+    """
+
+    serializer_class = UserSerializer
+    queryset = User.objects.all()
+
+    def dispatch(self, request, *args, **kwargs):
+        self.perform_authentication(self.initialize_request(request, *args, **kwargs))
+        if kwargs.get('pk') == 'me' and request.user:
+            kwargs['pk'] = request.user.pk
+        return super(UserViewSet, self).dispatch(request, *args, **kwargs)
+
+    def retrieve(self, request, *args, **kwargs):
+        if kwargs.get('pk') == request.user.pk:
+            return super(UserViewSet, self).retrieve(request, *args, **kwargs)
+        else:
+            return Response([_('Wrong credentials')], status=status.HTTP_400_BAD_REQUEST)
+
+    def create(self, request, *args, **kwargs):
+        try:
+            validators.validate_email(request.data['email'])
+        except:
+            raise ValidationError({"email": _('Enter a valid email address.')})
+        if User.objects.filter(email=request.data['email']).count() > 0:
+            raise ValidationError({"email": _('Email is already registered')})
+        if not request.data.get('password', None):
+            raise ValidationError({"password": _('Password must be present')})
+        if len(request.data['password']) < 6:
+            raise ValidationError({"password": _('Password is too short')})
+        if not request.data.get('first_name', None):
+            raise ValidationError({"first_name": _('Name must be present')})
+        user = User.objects.create_user(
+            request.data['username'],
+            request.data['email'],
+            request.data['password'],
+            first_name=request.data.get('first_name',""),
+            last_name=request.data.get('first_name',""),
+        )
+        serializer = self.get_serializer(user)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
 
 
 class EntryViewSet(viewsets.ModelViewSet):

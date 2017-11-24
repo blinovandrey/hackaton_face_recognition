@@ -23,6 +23,7 @@ from core.views import *
 
 router = routers.DefaultRouter()
 router.register('entries', EntryViewSet)
+router.register('users', UserViewSet)
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
