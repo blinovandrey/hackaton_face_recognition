@@ -106,13 +106,6 @@ class EntryViewSet(viewsets.ModelViewSet):
         request.data['photo'] = request.data['file']
         today_min = datetime.datetime.combine(datetime.date.today(), datetime.time.min)
 
-        if not Entry.objects.filter(user=request.user):
-            request.data['type'] = 'enter'
-        elif Entry.objects.filter(user=request.user, type='enter', datetimestamp__gte=today_min):
-            request.data['type'] = 'exit'
-        else:
-            request.data['type'] = 'enter'
-
         entry = Entry.objects.create(user=None, type=request.data['type'], photo=request.data['photo'])
 
         unknown_image = face_recognition.load_image_file(request.data['file'])
@@ -126,8 +119,15 @@ class EntryViewSet(viewsets.ModelViewSet):
                 print(results)
                 if results[0]:
                     entry.user = user
-                    entry.save()
                     print(entry.user)
+                    if not Entry.objects.filter(user=user):
+                        entry.type = 'enter'
+                    elif Entry.objects.filter(user=user, type='enter', datetimestamp__gte=today_min):
+                        entry.type = 'exit'
+                    else:
+                        entry.type = 'enter'
+                    entry.save()
+
                     break
         return Response(EntrySerializer(entry).data)
 
