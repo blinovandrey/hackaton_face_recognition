@@ -12,6 +12,7 @@ from rest_framework import status
 from rest_framework.exceptions import ValidationError
 from django.core import validators
 from django.utils.translation import ugettext_lazy as _
+from django.db.models import Q
 
 import face_recognition
 
@@ -40,19 +41,13 @@ class UserViewSet(mixins.RetrieveModelMixin,
     """
 
     serializer_class = UserSerializer
-    queryset = User.objects.all()
+    queryset = User.objects.none()
 
     def dispatch(self, request, *args, **kwargs):
         self.perform_authentication(self.initialize_request(request, *args, **kwargs))
         if kwargs.get('pk') == 'me' and request.user:
             kwargs['pk'] = request.user.pk
         return super(UserViewSet, self).dispatch(request, *args, **kwargs)
-
-    def retrieve(self, request, *args, **kwargs):
-        if kwargs.get('pk') == request.user.pk:
-            return super(UserViewSet, self).retrieve(request, *args, **kwargs)
-        else:
-            return Response([_('Wrong credentials')], status=status.HTTP_400_BAD_REQUEST)
 
     def create(self, request, *args, **kwargs):
         try:
@@ -87,8 +82,17 @@ class UserViewSet(mixins.RetrieveModelMixin,
                 user.comment = request.data['comment']
                 user.save()
                 Entry.objects.create(user=user,type=request.data['status']).save()
-        serializer = self.get_serializer(user)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+            serializer = self.get_serializer(user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response([_('Wrong credentials')], status=status.HTTP_400_BAD_REQUEST)
+
+    def get_queryset(self):
+        q = self.request.GET.get('q')
+        if q:
+            return User.objects.filter(Q(first_name__icontains=q) | Q(last_name__icontains=q))
+        else:
+            return User.objects.all()
 
 
 class EntryViewSet(viewsets.ModelViewSet):
@@ -134,3 +138,7 @@ class EntryViewSet(viewsets.ModelViewSet):
                     break
         return Response(EntrySerializer(entry).data)
 
+class EntryViewSet(viewsets.ModelViewSet):
+    queryset = Project.objects.all()
+    serializer_class = ProjectSerializer
+    

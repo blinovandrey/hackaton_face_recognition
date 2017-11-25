@@ -8,7 +8,7 @@ from stdimage.utils import UploadToClassNameDirUUID
 class User(AbstractUser):
     WORK_IN_OFFICE = 'work in office'
     NOT_WORKING = 'not working'
-    WORK_REMOTE = 'work reomte'
+    WORK_REMOTE = 'work remote'
     SICK = 'sick'
     BUSY = 'busy'
 
