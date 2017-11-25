@@ -6,10 +6,24 @@ from stdimage.utils import UploadToClassNameDirUUID
 
 # Create your models here.
 class User(AbstractUser):
+    WORK_IN_OFFICE = 'work in office'
+    WORK_REMOTE = 'work reomte'
+    SICK = 'sick'
+    BUSY = 'busy'
+
+    STATUS_CHOICES = (
+        (WORK_IN_OFFICE, _(WORK_IN_OFFICE)),
+        (WORK_REMOTE, _(WORK_REMOTE)),
+        (SICK, _(SICK)),
+        (BUSY, _(BUSY))
+    )
+    
+    status = models.CharField(max_length=20, null=True, blank=True, choices=STATUS_CHOICES)
     photo = StdImageField(verbose_name=_("image"), null=True, blank=True, upload_to=UploadToClassNameDirUUID())
     def thumbnail(self):
         return u'<img src="%s%s" />' % (settings.MEDIA_URL, self.image.thumbnail)
     thumbnail.allow_tags = True
+    
 
 class Entry(models.Model):
     ENTER = 'enter'
@@ -33,3 +47,8 @@ class Shedule(models.Model):
     day_of_week = models.IntegerField()
     start_time = models.CharField(max_length=10)
     end_time = models.CharField(max_length=10)
+
+class Project(models.Model):
+    users = models.ManyToManyField('core.User')
+    title = models.CharField(max_length=255)
+    description = models.CharField(max_length=255)

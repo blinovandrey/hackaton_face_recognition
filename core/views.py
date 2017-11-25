@@ -44,7 +44,8 @@ class GoogleLoginView(views.APIView):
 class UserViewSet(mixins.RetrieveModelMixin,
                   mixins.UpdateModelMixin,
                   mixins.CreateModelMixin,
-                  viewsets.GenericViewSet):
+                  mixins.ListModelMixin,
+                  viewsets.GenericViewSet,):
     """
     Доступ к текущему пользователю: `/users/me/` \n
     Получить токен: `/auth-token/`, username = `email`, password = `password` \n
@@ -85,6 +86,8 @@ class UserViewSet(mixins.RetrieveModelMixin,
             request.data['password'],
             first_name=request.data.get('first_name',""),
             last_name=request.data.get('first_name',""),
+            status=request.data.get("status"),
+            photo=request.data.get("photo")
         )
         serializer = self.get_serializer(user)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
