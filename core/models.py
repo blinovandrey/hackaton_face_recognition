@@ -7,6 +7,7 @@ from stdimage.utils import UploadToClassNameDirUUID
 # Create your models here.
 class User(AbstractUser):
     WORK_IN_OFFICE = 'work in office'
+    NOT_WORKING = 'not working'
     WORK_REMOTE = 'work reomte'
     SICK = 'sick'
     BUSY = 'busy'
@@ -15,10 +16,11 @@ class User(AbstractUser):
         (WORK_IN_OFFICE, _(WORK_IN_OFFICE)),
         (WORK_REMOTE, _(WORK_REMOTE)),
         (SICK, _(SICK)),
-        (BUSY, _(BUSY))
+        (BUSY, _(BUSY)),
     )
-    
+
     status = models.CharField(max_length=20, null=True, blank=True, choices=STATUS_CHOICES)
+    comment = models.TextField(null=True, blank=True)
     photo = StdImageField(verbose_name=_("image"), null=True, blank=True, upload_to=UploadToClassNameDirUUID())
     def thumbnail(self):
         return u'<img src="%s%s" />' % (settings.MEDIA_URL, self.image.thumbnail)

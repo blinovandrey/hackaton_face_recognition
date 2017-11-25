@@ -21,23 +21,10 @@ class GoogleLoginView(views.APIView):
     def post(self, request, format=None):
         try:
             idinfo = id_token.verify_oauth2_token(token, requests.Request(), settings.CLIENT_ID)
-
-            # Or, if multiple clients access the backend server:
-            # idinfo = id_token.verify_oauth2_token(token, requests.Request())
-            # if idinfo['aud'] not in [CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]:
-            #     raise ValueError('Could not verify audience.')
-
             if idinfo['iss'] not in ['accounts.google.com', 'https://accounts.google.com']:
                 raise ValueError('Wrong issuer.')
-
-            # If auth request is from a G Suite domain:
-            # if idinfo['hd'] != GSUITE_DOMAIN_NAME:
-            #     raise ValueError('Wrong hosted domain.')
-
-            # ID token is valid. Get the user's Google Account ID from the decoded token.
             userid = idinfo['sub']
         except ValueError:
-            # Invalid token
             pass
 
 
@@ -92,6 +79,16 @@ class UserViewSet(mixins.RetrieveModelMixin,
         serializer = self.get_serializer(user)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+    def update(self, request, *args, **kwargs):
+        if kwargs.get('pk') == request.user.pk:
+            user = User.objects.get(pk=request.user.pk)
+            if not user.status in ('work in office', 'not working'):
+                user.status = request.data['status']
+                user.comment = request.data['comment']
+                user.save()
+                Entry.objects.create(user=user,type=request.data['status']).save()
+        serializer = self.get_serializer(user)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class EntryViewSet(viewsets.ModelViewSet):
@@ -125,12 +122,15 @@ class EntryViewSet(viewsets.ModelViewSet):
                     print(entry.user)
                     if not Entry.objects.filter(user=user):
                         entry.type = 'enter'
+                        user.status = 'work in office'
                     elif Entry.objects.filter(user=user, type='enter', datetimestamp__gte=today_min):
                         entry.type = 'exit'
+                        user.status = 'not working'
                     else:
                         entry.type = 'enter'
+                        user.status = 'work in office'
                     entry.save()
-
+                    user.save()
                     break
         return Response(EntrySerializer(entry).data)
 
