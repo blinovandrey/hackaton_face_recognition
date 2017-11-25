@@ -13,6 +13,7 @@ from rest_framework.exceptions import ValidationError
 from django.core import validators
 from django.utils.translation import ugettext_lazy as _
 from django.db.models import Q
+from rest_framework.decorators import detail_route
 
 import face_recognition
 
@@ -94,6 +95,18 @@ class UserViewSet(mixins.RetrieveModelMixin,
         else:
             return User.objects.all()
 
+    @detail_route(methods=['get'])
+    def entries(self, request, pk=None):
+        user = self.get_object()
+        entries = user.entry_set
+        dt_start = request.GET.get('start')
+        if dt_start:
+            entries = entries.filter(datetimestamp__gte=dt_start)
+        dt_end = request.GET.get('end')
+        if dt_end:
+            entries = entries.filter(datetimestamp__lte=dt_end)
+        return Response(EntrySerializer(entries, many=True).data, status=status.HTTP_200_OK)
+        
 
 class EntryViewSet(viewsets.ModelViewSet):
     """
@@ -137,8 +150,3 @@ class EntryViewSet(viewsets.ModelViewSet):
                     user.save()
                     break
         return Response(EntrySerializer(entry).data)
-
-class EntryViewSet(viewsets.ModelViewSet):
-    queryset = Project.objects.all()
-    serializer_class = ProjectSerializer
-    
