@@ -21,7 +21,7 @@ class ProjectSerializer(serializers.ModelSerializer):
     users_details = ShortUserSerializer(many=True, read_only=True, source='users')
     class Meta:
         model = Project
-        fields = ('title', 'description', 'users', 'users_details')
+        fields = ('id', 'title', 'description', 'users', 'users_details')
 
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
