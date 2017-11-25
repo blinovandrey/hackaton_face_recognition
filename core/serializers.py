@@ -15,7 +15,7 @@ class SheduleSerializer(serializers.ModelSerializer):
 class ShortUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'first_name', 'last_name',)
+        fields = ('id', 'first_name', 'last_name', 'photo')
 
 class ProjectSerializer(serializers.ModelSerializer):
     users_details = ShortUserSerializer(many=True, read_only=True, source='users')
