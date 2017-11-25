@@ -24,6 +24,7 @@ from core.views import *
 router = routers.DefaultRouter()
 router.register('entries', EntryViewSet)
 router.register('users', UserViewSet)
+router.register('projects', ProjectViewSet)
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),

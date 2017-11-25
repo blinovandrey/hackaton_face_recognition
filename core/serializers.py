@@ -12,10 +12,16 @@ class SheduleSerializer(serializers.ModelSerializer):
         model = Shedule
         fields = '__all__'
 
+class ShortUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('id', 'first_name', 'last_name',)
+
 class ProjectSerializer(serializers.ModelSerializer):
+    users_details = ShortUserSerializer(many=True, read_only=True, source='users')
     class Meta:
         model = Project
-        fields = '__all__'
+        fields = ('title', 'description', 'users', 'users_details')
 
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
@@ -25,3 +31,4 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('id', 'username', 'password', 'first_name', 'last_name', 'email', 'status', 'photo', 'shedules', 'entries', 'projects')
+

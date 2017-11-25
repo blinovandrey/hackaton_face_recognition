@@ -150,3 +150,7 @@ class EntryViewSet(viewsets.ModelViewSet):
                     user.save()
                     break
         return Response(EntrySerializer(entry).data)
+
+class ProjectViewSet(viewsets.ModelViewSet):
+    queryset = Project.objects.all()
+    serializer_class = ProjectSerializer
