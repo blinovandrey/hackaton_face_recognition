@@ -78,7 +78,7 @@ class UserViewSet(mixins.RetrieveModelMixin,
     def update(self, request, *args, **kwargs):
         if kwargs.get('pk') == request.user.pk:
             user = User.objects.get(pk=request.user.pk)
-            if not user.status in ('work in office', 'not working'):
+            if request.data['status'] not in ('work in office', 'not working'):
                 user.status = request.data['status']
                 user.comment = request.data['comment']
                 user.save()
