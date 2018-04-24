@@ -17,6 +17,7 @@ from rest_framework.decorators import detail_route
 
 import face_recognition
 
+
 # Create your views here.
 class GoogleLoginView(views.APIView):
 
@@ -150,6 +151,7 @@ class EntryViewSet(viewsets.ModelViewSet):
                     user.save()
                     break
         return Response(EntrySerializer(entry).data)
+
 
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all()

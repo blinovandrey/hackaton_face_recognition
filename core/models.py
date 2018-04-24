@@ -4,7 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 from stdimage import StdImageField
 from stdimage.utils import UploadToClassNameDirUUID
 
-# Create your models here.
+
 class User(AbstractUser):
     WORK_IN_OFFICE = 'work in office'
     NOT_WORKING = 'not working'
@@ -44,11 +44,13 @@ class Entry(models.Model):
         return u'<img src="%s%s" />' % (settings.MEDIA_URL, self.image.thumbnail)
     thumbnail.allow_tags = True
 
+
 class Shedule(models.Model):
     user = models.ForeignKey('core.User', null=True, blank=True, on_delete=models.CASCADE)
     day_of_week = models.IntegerField()
     start_time = models.CharField(max_length=10)
     end_time = models.CharField(max_length=10)
+
 
 class Project(models.Model):
     users = models.ManyToManyField('core.User')
