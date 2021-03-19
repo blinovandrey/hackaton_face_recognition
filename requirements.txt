@@ -26,7 +26,7 @@ django-push-notifications==1.5.0
 django-redis-cache==1.7.1
 django-rest-swagger==2.1.2
 django-stdimage==3.0.0
-djangorestframework==3.7.1
+djangorestframework==3.11.2
 environ==1.0
 google-auth==1.2.1
 h2==2.6.2
