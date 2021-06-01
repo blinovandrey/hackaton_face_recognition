@@ -72,5 +72,5 @@ tornado==4.5.2
 Twisted==17.9.0
 txaio==2.8.2
 uritemplate==3.0.0
-urllib3==1.22
+urllib3==1.26.5
 zope.interface==4.4.3
