@@ -52,7 +52,7 @@ psycopg2==2.7.3.1
 pyasn1==0.4.2
 pyasn1-modules==0.2.1
 pycparser==2.18
-PyJWT==1.5.3
+PyJWT==2.4.0
 pymongo==2.8
 pyOpenSSL==17.3.0
 python-monkey-business==1.0.0
