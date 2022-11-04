@@ -69,7 +69,7 @@ six==1.11.0
 social-auth-app-django==2.0.0
 social-auth-core==1.5.0
 tornado==4.5.2
-Twisted==17.9.0
+Twisted==22.10.0
 txaio==2.8.2
 uritemplate==3.0.0
 urllib3==1.22
